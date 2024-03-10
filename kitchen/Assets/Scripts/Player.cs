@@ -23,9 +23,6 @@ public class Player : MonoBehaviour
 
     private void Input_OnInteractAction(object sender, System.EventArgs e)
     {
-        if (moveDir != Vector3.zero) { 
-            lastMoveDir = moveDir;
-        }
         if(Physics.Raycast(transform.position, lastMoveDir, out RaycastHit raycastHit, interationDistance, table))
         {
            if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter))
@@ -42,7 +39,7 @@ public class Player : MonoBehaviour
     private void Update()
     {
         HandleMovement();
-        //HandleInteractions();
+        bool var = CheckTwoHot(moveDir);
     }
 
     public bool ReturnIsWalking()
@@ -53,7 +50,10 @@ public class Player : MonoBehaviour
     private void HandleMovement() {
         moveInput = Input.GetMovementVector();
         moveDir = new Vector3(moveInput.x, 0, moveInput.y);
-
+        if (moveDir != Vector3.zero && !CheckTwoHot(moveDir))
+        {
+            lastMoveDir = moveDir;
+        }
         canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDir, moveDistance, table);
 
         if (!canMove && CheckTwoHot(moveDir))
@@ -84,24 +84,6 @@ public class Player : MonoBehaviour
         isWalking = moveDir != Vector3.zero;
     }
 
-    private void HandleInteractions()
-    {
-        if (moveDir != Vector3.zero) { 
-            lastMoveDir = moveDir;
-        }
-        if(Physics.Raycast(transform.position, lastMoveDir, out RaycastHit raycastHit, interationDistance, table))
-        {
-           if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter))
-            {
-                clearCounter.Interact();
-            }
-        }
-        else
-        {
-            //Debug.Log("nothing to interact with");
-        }
-
-    }
     private bool CheckTwoHot(Vector3 vector)
     {
         // Подсчет количества единиц в векторе
@@ -109,7 +91,6 @@ public class Player : MonoBehaviour
         if (vector.x != 0) count++;
         if (vector.y != 0) count++;
         if (vector.z != 0) count++;
-        
         // Проверка, что ровно два элемента равны 1
         return count >= 2;
     }
