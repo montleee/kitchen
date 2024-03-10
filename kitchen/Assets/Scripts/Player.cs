@@ -4,58 +4,114 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private float speed;
     [SerializeField] private float rotationSpeed = 10;
+    [SerializeField] private float moveDistance = 6f;
+    [SerializeField] private float playerRadius = 0.7f;
+    [SerializeField] private float interationDistance = 1f;
     [SerializeField] private InputHandler Input;
     [SerializeField] private LayerMask table;
     private float playerHeight = 2f;
-    [SerializeField] private float playerRadius = 0.7f;
     private Vector2 moveInput;
     private Vector3 moveDir;
+    private Vector3 lastMoveDir;
     private bool canMove;
     private bool isWalking;
-    void Start()
+    
+    private void Start()
     {
-
+        Input.OnInteractAction += Input_OnInteractAction; 
     }
 
-    void Update()
+    private void Input_OnInteractAction(object sender, System.EventArgs e)
     {
-
-        moveInput = Input.GetMovementVector();
-        moveDir = new Vector3(moveInput.x, 0, moveInput.y);
-
-        canMove = !Physics.Raycast(transform.position, moveDir, playerRadius, table);
-
-        if (!canMove)
+        if (moveDir != Vector3.zero) { 
+            lastMoveDir = moveDir;
+        }
+        if(Physics.Raycast(transform.position, lastMoveDir, out RaycastHit raycastHit, interationDistance, table))
         {
-            Vector3 MoveDirX = new Vector3(moveDir.x, 0, 0).normalized;
-            canMove = !Physics.Raycast(transform.position, MoveDirX, playerRadius, table);
-            if (canMove)
+           if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter))
             {
-                Debug.Log("x");
-                moveDir = MoveDirX;
-            }
-            else
-            {
-                Vector3 MoveDirZ = new Vector3(0, 0, moveDir.z).normalized;
-                canMove = !Physics.Raycast(transform.position, MoveDirZ, playerRadius, table);
-                if (canMove)
-                {
-                    moveDir = MoveDirZ;
-                }
+                clearCounter.Interact();
             }
         }
-
-        if (canMove)
+        else
         {
-            transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotationSpeed);
-            transform.position += moveDir * speed * Time.deltaTime;
+            Debug.Log("nothing to interact with");
         }
+    }
 
-        isWalking = moveDir != Vector3.zero;
+    private void Update()
+    {
+        HandleMovement();
+        //HandleInteractions();
     }
 
     public bool ReturnIsWalking()
     {
         return isWalking;
     }
+
+    private void HandleMovement() {
+        moveInput = Input.GetMovementVector();
+        moveDir = new Vector3(moveInput.x, 0, moveInput.y);
+
+        canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, moveDir, moveDistance, table);
+
+        if (!canMove && CheckTwoHot(moveDir))
+        {
+
+            Vector3 MoveDirX = new Vector3(moveDir.x, 0, 0).normalized;
+            canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, MoveDirX, moveDistance, table);
+            if (canMove)
+            {
+                moveDir = MoveDirX;
+            }
+            else
+            {
+                Vector3 MoveDirZ = new Vector3(0, 0, moveDir.z).normalized;
+                canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, MoveDirZ, moveDistance, table);
+                if (canMove)
+                {
+                    moveDir = MoveDirZ;
+                }
+            }
+        }
+        if (canMove)
+        {
+            transform.position += moveDir * speed * Time.deltaTime;
+        }
+        transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotationSpeed);
+
+        isWalking = moveDir != Vector3.zero;
+    }
+
+    private void HandleInteractions()
+    {
+        if (moveDir != Vector3.zero) { 
+            lastMoveDir = moveDir;
+        }
+        if(Physics.Raycast(transform.position, lastMoveDir, out RaycastHit raycastHit, interationDistance, table))
+        {
+           if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter))
+            {
+                clearCounter.Interact();
+            }
+        }
+        else
+        {
+            //Debug.Log("nothing to interact with");
+        }
+
+    }
+    private bool CheckTwoHot(Vector3 vector)
+    {
+        // Подсчет количества единиц в векторе
+        int count = 0;
+        if (vector.x != 0) count++;
+        if (vector.y != 0) count++;
+        if (vector.z != 0) count++;
+        
+        // Проверка, что ровно два элемента равны 1
+        return count >= 2;
+    }
 }
+
