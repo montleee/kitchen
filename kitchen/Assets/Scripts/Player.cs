@@ -1,7 +1,16 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
+using System;
 
 public class Player : MonoBehaviour
 {
+    public static Player Instance {  get; private  set; }
+    
+    public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
+    public class OnSelectedCounterChangedEventArgs : EventArgs {
+        public ClearCounter selectedCounter;
+    }
+
     [SerializeField] private float speed;
     [SerializeField] private float rotationSpeed = 10;
     [SerializeField] private float moveDistance = 6f;
@@ -15,38 +24,75 @@ public class Player : MonoBehaviour
     private Vector3 lastMoveDir;
     private bool canMove;
     private bool isWalking;
-    
+    private ClearCounter selectedCounter;
+
+    private void Awake()
+    {
+        if(Instance != null)
+        {
+            Debug.Log("error");
+        }
+        Instance = this;
+    }
     private void Start()
     {
         Input.OnInteractAction += Input_OnInteractAction; 
     }
 
+    public void SetSelectedCounter(ClearCounter selectedCounter)
+    {
+        this.selectedCounter = selectedCounter;
+        OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterChangedEventArgs
+        {
+            selectedCounter = selectedCounter
+        });
+    }
+
     private void Input_OnInteractAction(object sender, System.EventArgs e)
     {
-        if(Physics.Raycast(transform.position, lastMoveDir, out RaycastHit raycastHit, interationDistance, table))
+        if(selectedCounter != null)
         {
-           if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter))
-            {
-                clearCounter.Interact();
-            }
-        }
-        else
-        {
-            Debug.Log("nothing to interact with");
+            selectedCounter.Interact();
         }
     }
 
     private void Update()
     {
         HandleMovement();
-        bool var = CheckTwoHot(moveDir);
+        HandleInteractions();
     }
 
     public bool ReturnIsWalking()
     {
         return isWalking;
     }
+    private void HandleInteractions()
+    {
+        if (Physics.Raycast(transform.position, lastMoveDir, out RaycastHit raycastHit, interationDistance, table))
+        {
+            if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter))
+            {
 
+                if (clearCounter != selectedCounter)
+                {
+                    Debug.Log("123");
+                    selectedCounter = clearCounter;
+                    SetSelectedCounter(selectedCounter);
+                }
+            }
+            else
+            {
+                selectedCounter = null;
+                SetSelectedCounter(selectedCounter);
+            }
+        }
+        else
+        {
+            Debug.Log("121113");
+            selectedCounter = null;
+            SetSelectedCounter(selectedCounter);
+        }
+    }
     private void HandleMovement() {
         moveInput = Input.GetMovementVector();
         moveDir = new Vector3(moveInput.x, 0, moveInput.y);
@@ -83,6 +129,7 @@ public class Player : MonoBehaviour
 
         isWalking = moveDir != Vector3.zero;
     }
+    
 
     private bool CheckTwoHot(Vector3 vector)
     {
