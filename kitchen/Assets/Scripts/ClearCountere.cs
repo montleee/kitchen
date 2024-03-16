@@ -2,15 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ClearCounter : MonoBehaviour, IKitchenObjectParent
+public class ClearCountere : MonoBehaviour, IKitchenObjectParent
 {
     [SerializeField] private KitchenObjectsSO kitchenObjectsSO;
     [SerializeField] private Transform topPosition;
-    [SerializeField] private ClearCounter ClearCounter2;
+    [SerializeField] private IKitchenObjectParent ClearCounter2;
     private KitchenObjects kitchenObject;
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.T))
+        if( Input.GetKeyDown(KeyCode.T))
         {
             if (kitchenObject != null)
             {
@@ -51,4 +51,6 @@ public class ClearCounter : MonoBehaviour, IKitchenObjectParent
     {
         return kitchenObject != null;
     }
+
+    
 }

@@ -238,6 +238,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2395116490580822311, guid: e33ca84c10bf56f408574427fa487e3c,
+        type: 3}
+      propertyPath: ClearCounter2
+      value: 
+      objectReference: {fileID: 1310242508}
     - target: {fileID: 2936145512854886953, guid: e33ca84c10bf56f408574427fa487e3c,
         type: 3}
       propertyPath: m_Name
@@ -655,6 +660,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78038cf5f28fc1b479a7a53ca111611e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  kitchenObjectPos: {fileID: 0}
   speed: 10
   rotationSpeed: 10
   moveDistance: 0.5
@@ -761,6 +767,18 @@ Transform:
   - {fileID: 1654680475}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 53.3, y: 0, z: 0}
+--- !u!114 &1310242508 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2395116490580822311, guid: e33ca84c10bf56f408574427fa487e3c,
+    type: 3}
+  m_PrefabInstance: {fileID: 7652300516908532837}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6b52c4f6fe3d49439d896f2a28eed76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1654680474
 GameObject:
   m_ObjectHideFlags: 3
@@ -854,6 +872,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1683549620 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2395116490580822311, guid: e33ca84c10bf56f408574427fa487e3c,
+    type: 3}
+  m_PrefabInstance: {fileID: 250426495}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6b52c4f6fe3d49439d896f2a28eed76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &1768645242
@@ -964,6 +994,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2395116490580822311, guid: e33ca84c10bf56f408574427fa487e3c,
+        type: 3}
+      propertyPath: ClearCounter2
+      value: 
+      objectReference: {fileID: 1683549620}
     - target: {fileID: 2936145512854886953, guid: e33ca84c10bf56f408574427fa487e3c,
         type: 3}
       propertyPath: m_Name

@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IKitchenObjectParent
 {
     public static Player Instance {  get; private  set; }
     
@@ -10,6 +10,8 @@ public class Player : MonoBehaviour
     public class OnSelectedCounterChangedEventArgs : EventArgs {
         public ClearCounter selectedCounter;
     }
+    [SerializeField] private Transform kitchenObjectPos;
+    private KitchenObjects kitchenObject;
 
     [SerializeField] private float speed;
     [SerializeField] private float rotationSpeed = 10;
@@ -140,6 +142,27 @@ public class Player : MonoBehaviour
         if (vector.z != 0) count++;
         // Проверка, что ровно два элемента равны 1
         return count >= 2;
+    }
+
+    public Transform GetKitchenObjectPos()
+    {
+        return kitchenObjectPos;
+    }
+    public void SetKitchenObject(KitchenObjects kitchenObject)
+    {
+        this.kitchenObject = kitchenObject;
+    }
+    public KitchenObjects GetKitchenObject()
+    {
+        return kitchenObject;
+    }
+    public void ClearKitchenObject()
+    {
+        kitchenObject = null;
+    }
+    public bool HasKitchenObject()
+    {
+        return kitchenObject != null;
     }
 }
 
